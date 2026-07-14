@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain.chat_models import BaseChatModel, init_chat_model
+from langchain.chat_models import init_chat_model
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 

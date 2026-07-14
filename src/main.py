@@ -5,7 +5,8 @@ from langgraph.graph.state import RunnableConfig
 from langchain_core.messages import (
     BaseMessage,
     HumanMessage,
-    SystemMessage
+    SystemMessage,
+    AIMessage
 )
 from rich import print
 from rich.markdown import Markdown
@@ -36,20 +37,19 @@ def main():
         if user_input.lower() in ("quit", "exit", "sair"):
             break
 
-        human_message = HumanMessage(content=user_input)
-        current_loop_messages = [human_message]
-
         if not all_messages:
             logger.info("Adicionando sistema message")
-            all_messages = [SystemMessage(content=SYSTEM_PROMPT)]
+            current_loop_messages = [SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=user_input)]
+        else:
+            current_loop_messages = [HumanMessage(content=user_input)]
 
-        result = graph.invoke({"messages": current_loop_messages}, config=config)
+        result = graph.invoke({"messages": current_loop_messages, "tool_calls_count": {}}, config=config)
 
         print("[bold cyan]RESPOSTA: \n")
         for message in result["messages"]:
-            print(Markdown(message.content))
-            print("\n\n  ---  \n\n")
-
+            if isinstance(message, AIMessage):
+                print(Markdown(str(message.content)))
+                print("\n\n  ---  \n\n")
         all_messages = result["messages"]
 
     print(all_messages)
