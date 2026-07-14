@@ -1,6 +1,6 @@
 import pypdf
 from docx import Document as DocxDocument
-from langchain_core.tools import tool
+from langchain.tools import BaseTool, tool
 
 @tool
 def extract_text_from_pdf(pdf_path: str) -> str:
@@ -42,3 +42,6 @@ def extract_text_from_txt(txt_path: str) -> str:
     """
     with open(txt_path, 'r') as file:
         return file.read()
+
+TOOLS: list[BaseTool] = [extract_text_from_pdf, extract_text_from_docx, extract_text_from_txt]
+TOOLS_BY_NAME: dict[str, BaseTool] = {tool.name: tool for tool in TOOLS}
